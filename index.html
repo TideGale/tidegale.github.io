@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>谭国强 · 嵌入式软件作品集</title>
+<meta name="description" content="谭国强，2027 届嵌入式软件方向。两个项目的实现细节、实测数据、已知限制。">
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #5b5f66;
+    --line: #e4e2dd;
+    --bg: #fbfaf7;
+    --card: #ffffff;
+    --accent: #1f5f4b;
+    --code: #f2f0ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg: #e8e6e1;
+      --muted: #a0a4ab;
+      --line: #2e2f33;
+      --bg: #141516;
+      --card: #1b1c1e;
+      --accent: #6fc3a3;
+      --code: #232527;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 56px 22px 80px; }
+  header { padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  h1 { font-size: 30px; line-height: 1.3; margin: 0 0 6px; letter-spacing: .5px; }
+  .sub { color: var(--muted); font-size: 15px; margin: 0; }
+  .tags { margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tags span {
+    font-size: 13px; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px;
+  }
+  h2 {
+    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+    margin: 52px 0 18px;
+  }
+  article {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin: 0 0 18px;
+  }
+  article h3 { margin: 0 0 4px; font-size: 20px; line-height: 1.35; }
+  .meta { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  article p { margin: 0 0 12px; }
+  article ul { margin: 0 0 14px; padding-left: 20px; }
+  article li { margin: 3px 0; }
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px; margin: 16px 0 18px;
+  }
+  .stats div { background: var(--code); border-radius: 6px; padding: 10px 12px; }
+  .stats b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .stats i { font-style: normal; font-size: 12px; color: var(--muted); }
+  .links { display: flex; flex-wrap: wrap; gap: 14px; font-size: 14px; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover { border-bottom-color: var(--accent); }
+  code {
+    font-family: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: .88em; background: var(--code); padding: 1px 5px; border-radius: 4px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 0 0 8px; }
+  th, td { text-align: left; padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 13px; white-space: nowrap; width: 92px; }
+  .honest { border-left-color: #b0803a; }
+  .honest ul { margin-bottom: 0; }
+  footer { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  footer a { color: var(--muted); }
+  @media (max-width: 520px) {
+    .wrap { padding: 36px 18px 60px; }
+    h1 { font-size: 25px; }
+    article { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>谭国强</h1>
+  <p class="sub">嵌入式软件 · 2027 届 · 湖南科技学院 电子科学与技术</p>
+  <div class="tags">
+    <span>C</span><span>STM32</span><span>FreeRTOS</span><span>嵌入式 Linux</span><span>V4L2</span><span>多线程</span><span>HTTP</span>
+  </div>
+</header>
+
+<h2>做过的事</h2>
+
+<article>
+  <h3>RK3568 视频采集与推流终端</h3>
+  <p class="meta">2026 秋 · Linux 应用 · 约 2000 行 C</p>
+  <p>在 RK3568 开发板上打通一条从 USB 摄像头到浏览器的实时链路。采集、解耦、本地预览、HTTP 推流、抓拍、状态查询，全部自己实现，没有用现成的流媒体框架。</p>
+  <ul>
+    <li>采集用 V4L2（Video for Linux 2，Linux 视频框架）的 mmap（memory mapping，内存映射）四缓冲，1280x720 MJPG</li>
+    <li>中间加环形缓冲，拆两条队列，采集端复制两份，推流和预览各吃各的，谁慢谁丢自己的帧</li>
+    <li>一帧从队列只取一次，再广播给所有客户端，慢客户端 1 秒发送超时直接踢掉</li>
+    <li>自写字符设备驱动，把帧率和丢帧数暴露到用户态</li>
+  </ul>
+  <div class="stats">
+    <div><b>15.1 fps</b><i>摄像头固件上限</i></div>
+    <div><b>0 丢帧</b><i>推流，32.8 分钟</i></div>
+    <div><b>393</b><i>采样点</i></div>
+    <div><b>0 增长</b><i>RSS，28 分钟后</i></div>
+  </div>
+  <p>帧率只有 15.1fps，排查了七步才确认不是代码问题：硬件声明支持 30fps、驱动读回也是 1/30、USB 是 480Mbps 高速链路、dmesg 无带宽错误，最后把分辨率降到 640x480，帧率纹丝不动，说明瓶颈在摄像头固件。这个结论写进了 README 的排查表。</p>
+  <div class="links">
+    <a href="https://github.com/nametanguoqiang/rk3568-video-stream">源码</a>
+    <a href="https://github.com/nametanguoqiang/rk3568-video-stream/releases">发布页</a>
+  </div>
+</article>
+
+<article>
+  <h3>智能门锁 · A/B 双分区 OTA</h3>
+  <p class="meta">2026 秋 · 裸机 + RTOS · 从零重建</p>
+  <p>STM32F103RCT6，256KB Flash 切成四块：Bootloader 16KB、两个 96KB 应用槽、4KB 元数据。目标是「能升级」和「升级失败不变砖」这两件事，不是把升级当成附加功能。</p>
+  <ul>
+    <li>Bootloader 自己写：读元数据、magic 加 CRC 自校验、选中槽 CRC 校验、校验不过切另一槽、跳转</li>
+    <li>试启动用 <code>trial</code> 标记加 <code>boot_count</code> 计数，连续三次启动失败自动切回旧槽并清零</li>
+    <li>新固件先写到另一分区，写完切标记再复位，升级过程断电不会把程序区写坏</li>
+    <li>外设：AS608 指纹走 UART、4x4 键盘 30ms 消抖只报按下沿、SSD1306 OLED、W25Q128 的 JEDEC ID 读到 0xEF4018</li>
+    <li>上 FreeRTOS，指纹、键盘、锁体、显示四个任务各自阻塞</li>
+  </ul>
+  <div class="stats">
+    <div><b>0xCBF43926</b><i>CRC32 标准向量</i></div>
+    <div><b>0 错误</b><i>擦写 8KB 校验</i></div>
+    <div><b>0xEF4018</b><i>W25Q128 ID</i></div>
+    <div><b>3 次</b><i>回滚阈值</i></div>
+  </div>
+  <p>每一步都有独立测试分支，切过去能编译运行。CRC32 用标准向量 <code>123456789</code> 对过；把 magic 改成 <code>0x12345678</code> 后上电打印 <code>meta invalid</code>；magic 正确但改 <code>boot_count</code> 不重算 CRC，同样打印 <code>meta invalid</code>，两道检查分别在测。</p>
+  <div class="links">
+    <a href="https://github.com/nametanguoqiang/stm32-smart-lock-ota">源码</a>
+    <a href="https://github.com/nametanguoqiang/stm32-smart-lock-ota/releases">固件下载</a>
+  </div>
+</article>
+
+<article class="honest">
+  <h3>没做完的部分</h3>
+  <p class="meta">写在这里，免得当成已完成</p>
+  <ul>
+    <li>门锁 App 侧的升级流程（收固件、写另一分区、切标记）还没接完，ESP8266 走 MQTT 收包也在做</li>
+    <li>Bootloader 不能给自己升级，镜像也没有签名，CRC32 只防传输错误，不防篡改</li>
+    <li>视频项目的本地预览没有双缓冲，写显存写到一半碰上刷新会撕裂，15fps 下不明显</li>
+    <li>软件解码加缩放吃单核四到六成，优化方向在缩放循环，不在换解码库</li>
+  </ul>
+</article>
+
+<h2>技术栈</h2>
+<table>
+  <tr><th>语言</th><td>C。两个项目的主控代码都是自己写的</td></tr>
+  <tr><th>单片机</th><td>STM32F103，HAL 加 CubeMX，Keil MDK。GPIO、串口、中断、定时器、SPI、硬件和软件 I2C 都上过手</td></tr>
+  <tr><th>RTOS</th><td>FreeRTOS，任务划分、优先级、队列、看门狗。调度器内部和内存管理还在补</td></tr>
+  <tr><th>Linux</th><td>应用编程、多线程、文件 IO、framebuffer、V4L2。设备树和内核驱动在学</td></tr>
+  <tr><th>网络</th><td>手写 HTTP 服务，socket 收发和超时控制</td></tr>
+  <tr><th>工具</th><td>Git、交叉编译工具链、Makefile</td></tr>
+</table>
+
+<footer>
+  联系：19138380980@163.com ·
+  <a href="https://github.com/nametanguoqiang">GitHub</a>
+  <br>最后更新 2026-11
+</footer>
+
+</div>
+</body>
+</html>
