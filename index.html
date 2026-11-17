@@ -122,8 +122,8 @@
   </div>
   <p>帧率只有 15.1fps，排查了七步才确认不是代码问题：硬件声明支持 30fps、驱动读回也是 1/30、USB 是 480Mbps 高速链路、dmesg 无带宽错误，最后把分辨率降到 640x480，帧率纹丝不动，说明瓶颈在摄像头固件。这个结论写进了 README 的排查表。</p>
   <div class="links">
-    <a href="https://github.com/nametanguoqiang/rk3568-video-stream">源码</a>
-    <a href="https://github.com/nametanguoqiang/rk3568-video-stream/releases">发布页</a>
+    <a href="https://github.com/TideGale/rk3568-video-stream">源码</a>
+    <a href="https://github.com/TideGale/rk3568-video-stream/releases">发布页</a>
   </div>
 </article>
 
@@ -146,8 +146,8 @@
   </div>
   <p>每一步都有独立测试分支，切过去能编译运行。CRC32 用标准向量 <code>123456789</code> 对过；把 magic 改成 <code>0x12345678</code> 后上电打印 <code>meta invalid</code>；magic 正确但改 <code>boot_count</code> 不重算 CRC，同样打印 <code>meta invalid</code>，两道检查分别在测。</p>
   <div class="links">
-    <a href="https://github.com/nametanguoqiang/stm32-smart-lock-ota">源码</a>
-    <a href="https://github.com/nametanguoqiang/stm32-smart-lock-ota/releases">固件下载</a>
+    <a href="https://github.com/TideGale/stm32-smart-lock-ota">源码</a>
+    <a href="https://github.com/TideGale/stm32-smart-lock-ota/releases">固件下载</a>
   </div>
 </article>
 
@@ -174,7 +174,7 @@
 
 <footer>
   联系：19138380980@163.com ·
-  <a href="https://github.com/nametanguoqiang">GitHub</a>
+  <a href="https://github.com/TideGale">GitHub</a>
   <br>最后更新 2026-11
 </footer>
 

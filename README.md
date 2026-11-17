@@ -1,8 +1,8 @@
-# nametanguoqiang.github.io
+# tidegale.github.io
 
 作品集主页，单页静态站，纯 HTML 加内联 CSS，没有构建步骤，改完直接提交就好。
 
-线上地址 https://nametanguoqiang.github.io/
+线上地址 https://tidegale.github.io/
 
 ## 改什么
 
