@@ -121,6 +121,7 @@
     <div><b>0 增长</b><i>RSS，28 分钟后</i></div>
   </div>
   <p>帧率只有 15.1fps，排查了七步才确认不是代码问题：硬件声明支持 30fps、驱动读回也是 1/30、USB 是 480Mbps 高速链路、dmesg 无带宽错误，最后把分辨率降到 640x480，帧率纹丝不动，说明瓶颈在摄像头固件。这个结论写进了 README 的排查表。</p>
+  <p><b>v2.0 加了语音层</b>：常开录音（ALSA，每 3 秒一段，人声门限 900 才落盘）→ 云端 ASR → 意图判断 → 抓帧 → 多模态回答 → TTS 念出来。端侧只做数据通路，重计算全部上云——A55 四核跑不动本地模型，这是主动取舍，不是没想到。</p>
   <div class="links">
     <a href="https://github.com/TideGale/rk3568-video-stream">源码</a>
     <a href="https://github.com/TideGale/rk3568-video-stream/releases">发布页</a>
@@ -145,6 +146,7 @@
     <div><b>3 次</b><i>回滚阈值</i></div>
   </div>
   <p>每一步都有独立测试分支，切过去能编译运行。CRC32 用标准向量 <code>123456789</code> 对过；把 magic 改成 <code>0x12345678</code> 后上电打印 <code>meta invalid</code>；magic 正确但改 <code>boot_count</code> 不重算 CRC，同样打印 <code>meta invalid</code>，两道检查分别在测。</p>
+  <p><b>v1.0 已收尾</b>：三条验收标准全部实测通过——A→B→A 双镜像闭环（两次 <code>verify ok</code>，复位后 <code>VTOR</code> 落在对应槽）、坏包连续三次启动失败自动回滚（<code>rollback 1 → 0</code>）、MQTT 远程开锁（PC 订阅 <code>lock/state</code> 往 <code>lock/cmd</code> 发 <code>open</code>，设备回执）。</p>
   <div class="links">
     <a href="https://github.com/TideGale/stm32-smart-lock-ota">源码</a>
     <a href="https://github.com/TideGale/stm32-smart-lock-ota/releases">固件下载</a>
@@ -155,7 +157,8 @@
   <h3>没做完的部分</h3>
   <p class="meta">写在这里，免得当成已完成</p>
   <ul>
-    <li>门锁 App 侧的升级流程（收固件、写另一分区、切标记）还没接完，ESP8266 走 MQTT 收包也在做</li>
+    <li>门锁：W25Q128 目前只当 OTA 暂存区，日志功能排到下一版</li>
+    <li>视频：语音链路依赖云端，断网时录音照常落盘，但不识别、不回答</li>
     <li>Bootloader 不能给自己升级，镜像也没有签名，CRC32 只防传输错误，不防篡改</li>
     <li>视频项目的本地预览没有双缓冲，写显存写到一半碰上刷新会撕裂，15fps 下不明显</li>
     <li>软件解码加缩放吃单核四到六成，优化方向在缩放循环，不在换解码库</li>
@@ -167,8 +170,8 @@
   <tr><th>语言</th><td>C。两个项目的主控代码都是自己写的</td></tr>
   <tr><th>单片机</th><td>STM32F103，HAL 加 CubeMX，Keil MDK。GPIO、串口、中断、定时器、SPI、硬件和软件 I2C 都上过手</td></tr>
   <tr><th>RTOS</th><td>FreeRTOS，任务划分、优先级、队列、看门狗。调度器内部和内存管理还在补</td></tr>
-  <tr><th>Linux</th><td>应用编程、多线程、文件 IO、framebuffer、V4L2。设备树和内核驱动在学</td></tr>
-  <tr><th>网络</th><td>手写 HTTP 服务，socket 收发和超时控制</td></tr>
+  <tr><th>Linux</th><td>应用编程、多线程、文件 IO、framebuffer、V4L2、ALSA 录音、amixer 音频路由。设备树和内核驱动在学</td></tr>
+  <tr><th>网络</th><td>手写 HTTP 服务，socket 收发和超时控制；交叉编译 openssl/curl 接云端 API</td></tr>
   <tr><th>工具</th><td>Git、交叉编译工具链、Makefile</td></tr>
 </table>
 
