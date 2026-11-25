@@ -70,6 +70,10 @@
   .stats div { background: var(--code); border-radius: 6px; padding: 10px 12px; }
   .stats b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
   .stats i { font-style: normal; font-size: 12px; color: var(--muted); }
+  .shots { margin: 6px 0 20px; }
+  .shots figure { margin: 0 0 14px; }
+  .shots img { display: block; width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); background: var(--code); }
+  .shots figcaption { margin-top: 7px; font-size: 13px; line-height: 1.55; color: var(--muted); }
   .links { display: flex; flex-wrap: wrap; gap: 14px; font-size: 14px; }
   a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
   a:hover { border-bottom-color: var(--accent); }
@@ -112,7 +116,7 @@
     <li>采集用 V4L2（Video for Linux 2，Linux 视频框架）的 mmap（memory mapping，内存映射）四缓冲，1280x720 MJPG</li>
     <li>中间加环形缓冲，拆两条队列，采集端复制两份，推流和预览各吃各的，谁慢谁丢自己的帧</li>
     <li>一帧从队列只取一次，再广播给所有客户端，慢客户端 1 秒发送超时直接踢掉</li>
-    <li>自写字符设备驱动，把帧率和丢帧数暴露到用户态</li>
+    <li>用户态采集和推流，帧率、丢帧数、RSS 通过 HTTP 状态接口暴露</li>
   </ul>
   <div class="stats">
     <div><b>15.1 fps</b><i>摄像头固件上限</i></div>
@@ -121,7 +125,17 @@
     <div><b>0 增长</b><i>RSS，28 分钟后</i></div>
   </div>
   <p>帧率只有 15.1fps，排查了七步才确认不是代码问题：硬件声明支持 30fps、驱动读回也是 1/30、USB 是 480Mbps 高速链路、dmesg 无带宽错误，最后把分辨率降到 640x480，帧率纹丝不动，说明瓶颈在摄像头固件。这个结论写进了 README 的排查表。</p>
-  <p><b>v2.0 加了语音层</b>：常开录音（ALSA，每 3 秒一段，人声门限 900 才落盘）→ 云端 ASR → 意图判断 → 抓帧 → 多模态回答 → TTS 念出来。端侧只做数据通路，重计算全部上云——A55 四核跑不动本地模型，这是主动取舍，不是没想到。</p>
+  <div class="shots">
+    <figure>
+      <img src="img/board.jpg" alt="RK3568 开发板和屏，屏上是交叉编译和 scp 传输的画面" loading="lazy">
+      <figcaption>板子跑起来：交叉编译完，scp 直接传到板子上</figcaption>
+    </figure>
+    <figure>
+      <img src="img/status.png" alt="终端里 wget 状态接口，返回帧率、丢帧数、RSS 的 JSON" loading="lazy">
+      <figcaption>状态接口 <code>/status</code>：帧率、丢帧数、RSS 一次读全</figcaption>
+    </figure>
+  </div>
+  <p><b>v2.0 到 v2.1 做了语音层</b>：常开录音（ALSA，每 3 秒一段，人声门限 900 才落盘）→ 云端 ASR → 意图判断 → 抓帧 → 多模态回答 → TTS 念出来。端侧只做数据通路，重计算全部上云——A55 四核跑不动本地模型，这是主动取舍，不是没想到。</p>
   <div class="links">
     <a href="https://github.com/TideGale/rk3568-video-stream">源码</a>
     <a href="https://github.com/TideGale/rk3568-video-stream/releases">发布页</a>
